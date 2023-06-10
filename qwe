@@ -1,0 +1,217 @@
+public record ApplicationRequestDto(CustomerDto customer,
+                                    DepositDto deposit,
+                                    ApplicationFatcaDto fatca) {
+}
+
+public record CustomerDto(
+        @Schema(description = "Фамилия", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        String lastName,
+        @Schema(description = "Имя", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        String firstName,
+        @Schema(description = "Отчество")
+        String middleName,
+        @Schema(description = "Признак публичного должностного лица", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        Boolean pdl,
+        @Schema(description = "Пол", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        GenderCode gender,
+        @Schema(description = "Дата рождения", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        LocalDate birthDate,
+        @Schema(description = "Место рождения", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        String birthPlace,
+        @Schema(description = "Гражданство", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        String citizenship,
+        @Schema(description = "ИНН", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        String inn,
+        @Schema(description = "СНИЛС", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        String snils,
+        @Schema(description = "Идентификаторы клиента во внешних системах", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        List<CustomerExternalIdentifierDto> externalIdentifiers,
+        @Schema(description = "Адреса", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        List<AddressDto> addresses,
+        @Schema(description = "Контакты", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        List<ContactDto> contacts,
+        @Schema(description = "Документ", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        DocumentDto document) {
+}
+
+public enum GenderCode {
+    FEMALE("Женский"),
+    MALE("Мужской");
+
+    private final String description;
+}
+
+@Schema(description = "Идентификатор клиента во внешней системе")
+public record CustomerExternalIdentifierDto(@Schema(description = "Идентификатор", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                                            String id,
+                                            @Schema(description = "Код", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                                            ExternalSystemCode code) {
+}
+
+public enum ExternalSystemCode {
+    BIS("БИС"),
+    FINSERVICES("Финуслуги"),
+    SIEBEL("Зибель");
+
+    private final String description;
+}
+
+public record AddressDto(@Schema(description = "Тип", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull AddressType type,
+                         @Schema(description = "Почтовый индекс") String zipCode,
+                         @Schema(description = "Полный адрес", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull String fullAddress,
+                         @Schema(description = "Код страны") String countryCode,
+                         @Schema(description = "Город") String city,
+                         @Schema(description = "Регион") String region,
+                         @Schema(description = "Район") String district,
+                         @Schema(description = "Область") String area,
+                         @Schema(description = "Населенный пункт") String settlement,
+                         @Schema(description = "Добавочная область") String additionArea,
+                         @Schema(description = "Улица") String street,
+                         @Schema(description = "Код ФИАС") String fiasCode,
+                         @Schema(description = "Строение") String building,
+                         @Schema(description = "Корпус") String frame,
+                         @Schema(description = "Дом") String house,
+                         @Schema(description = "Квартира") String flat) {
+}
+
+public enum AddressType {
+    REGISTRATION("Регистрации"),
+    RESIDENTIAL("Проживания");
+
+    private final String description;
+}
+
+public record ContactDto(@Schema(description = "Тип", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                         ContactType type,
+                         @Schema(description = "Значение", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                         String value,
+                         @Schema(description = "Признак основного контакта", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                         boolean main,
+                         @Schema(description = "Дата и время подтверждения")
+                         LocalDateTime verificationDate) {
+}
+
+public enum ContactType {
+    EMAIL("Email адрес"),
+    HOME("Домашний номер телефона"),
+    MOBILE("Мобильный телефон"),
+    WORK("Рабочий телефон");
+
+    private final String description;
+}
+
+public record DocumentDto(@Schema(description = "Тип", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                          DocumentType type,
+                          @Schema(description = "Серия", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                          String serial,
+                          @Schema(description = "Номер", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                          String number,
+                          @Schema(description = "Выдан", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                          String issued,
+                          @Schema(description = "Дата выдачи", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                          LocalDate issueDate,
+                          @Schema(description = "Код подразделения", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+                          String divisionCode) {
+}
+
+public enum DocumentType {
+    BIRTH_CERTIFICATE("Свидетельство о рождении гражданина РФ (для гражданина Российской Федерации, не достигшего 14 лет)"),
+    MILITARY_IDENTITY_CARD("Удостоверение личности военнослужащего (для офицеров, прапорщиков и мичманов)"),
+    MILITARY_SERVICE_CARD("Военный билет военнослужащего"),
+    PASSPORT("Паспорт гражданина РФ", "Passport RF"),
+    PASSPORT_SAILOR("Паспорт моряка"),
+    TEMPORARY_IDENTITY_CARD("Временное удостоверение личности гражданина РФ");
+
+    private final String description;
+    private final String crmType;
+
+    DocumentType(String description) {
+        this.description = description;
+        this.crmType = null;
+    }
+}
+
+public record DepositDto(String platformContractId,
+                         DepositProductCode depositCode,
+                         String optionCode,
+                         CurrencyCode currency,
+                         BigDecimal amount,
+                         BigDecimal rate,
+                         DurationDto duration,
+                         List<AccountDto> accounts) {
+}
+
+public enum DepositProductCode {
+    RBABCRUB
+}
+
+public enum CurrencyCode {
+    RUB
+}
+
+public record DurationDto(DurationType type, Integer value) {
+}
+
+public enum DurationType {
+    DAY(1, 0, "День"),
+    MONTH(30, 1, "Месяц"),
+    YEAR(365, 12, "Год"),
+    QUARTER(90, 3, "Квартальный");
+
+    private final int days;
+    private final int months;
+    private final String description;
+}
+
+public record AccountDto(AccountPaymentType type,
+                         String number,
+                         String bic,
+                         PaymentMethodCode method,
+                         PaymentFrequencyCode frequency) {
+}
+
+public enum AccountPaymentType {
+    INTEREST_PAYMENT("Для выплаты процентов"),
+    WITHDRAWAL("Для вывода средств");
+
+    private final String description;
+}
+
+public enum PaymentMethodCode {
+    ADDING_DEPOSIT("Причисление %% к телу вклада"),
+    CLIENT_ACCOUNT("На счет клиента в том же банке"),
+    NOMINAL_ACCOUNT("На номинальный счет");
+
+    private final String description;
+}
+
+public enum PaymentFrequencyCode {
+    AT_END("В конце"),
+    INTEREST_IN_ADVANCE("Проценты вперед"),
+    EVERYDAY("Ежедневно"),
+    WEEKLY("Еженедельно"),
+    MONTHLY("Ежемесячно"),
+    QUARTERLY("Ежеквартально"),
+    SEMI_ANNUAL("Раз в полгода"),
+    YEARLY("Ежегодно"),
+    ARBITRARY("Произвольно");
+
+    private final String description;
+}
+
+public record ApplicationFatcaDto(
+        @Schema(description = "Я действую только к своей собственной выгоде и от собственного лица", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        Boolean ownWillAction,
+        @Schema(description = "Иные физические лица, имеющие возможность контролировать мои действия (определять решения), отсутствуют", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        Boolean noOneControlsActions,
+        @Schema(description = "Я подтверждаю, что не являюсь налоговым резидентом иностранного государства (территории)", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        Boolean onlyRussianTaxpayer,
+        @Schema(description = "Я подтверждаю, что местом моего рождения не является территория США", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        Boolean notUsaBirthPlace,
+        @Schema(description = "Я подтверждаю, что доход, получаемый мной, не является объектом налогообложения США, как доход, получаемый гражданином США или иностранным резидентом США", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        Boolean notUsaTaxpayer,
+        @Schema(description = "Я подтверждаю, что у меня нет гражданства/действующего постоянного вида на жительство (United States Permanent Resident Card в случае США) иностранного государства, включая США", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        Boolean noUsaGreenCard,
+        @Schema(description = "Статус Клиента по FATCA/CRS", requiredMode = Schema.RequiredMode.REQUIRED) @NotNull
+        String status) {
+}
